@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Aniversario</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body { margin: 0; padding: 0; background-color: #121212; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; min-height: 200vh; overflow-x: hidden; }
+
+        /* --- PANTALLA DE INICIO --- */
+        #pantalla-inicio {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #121212; z-index: 999999; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        #boton-iniciar {
+            padding: 25px 50px; font-size: 1.8rem; background: #d81b60; color: white;
+            border: 2px solid #fff; border-radius: 50px; cursor: pointer; 
+            font-family: 'Playfair Display', serif; font-weight: bold;
+            box-shadow: 0 0 20px rgba(216, 27, 96, 0.5);
+            transition: transform 0.3s ease;
+        }
+        #boton-iniciar:hover { transform: scale(1.1); }
+
+        /* --- TRANSICIÓN DE FLORES --- */
+        #transicion-flores { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none; display: none; }
+        .flor-transicion { position: absolute; opacity: 0; animation: crecer 2.5s ease-out forwards; will-change: transform; }
+        @keyframes crecer {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(3) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- ELEMENTOS FLOTANTES --- */
+        #corazones-fondo { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+        .corazon, .imagen-flotante { position: absolute; opacity: 0; animation: flotar 6s linear infinite; pointer-events: none; }
+        .corazon { color: #d81b60; font-size: 20px; }
+        .imagen-flotante { object-fit: contain; }
+        @keyframes flotar { 
+            0% { transform: translateY(105vh) scale(0.5); opacity: 0; } 
+            20% { opacity: 0.6; } 80% { opacity: 0.6; } 
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; } 
+        }
+
+        /* --- LAYOUT --- */
+        #jardin-interactivo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+        .flor-dibujada { position: absolute; pointer-events: none; object-fit: contain; }
+
+        .barra-superior { position: sticky; top: 10px; width: 100%; display: flex; justify-content: center; z-index: 100; }
+        .reproductor-estilo { 
+            background: rgba(255, 255, 255, 0.05); padding: 10px 30px; border-radius: 50px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+        }
+        .reproductor-estilo p { margin: 0; font-size: 1rem; color: #f4ebd9; font-weight: 600; font-family: 'Playfair Display', serif; }
+
+        .contenido-web { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .seccion-principal { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 40px; }
+        .bloque-titulo { background: rgba(18, 18, 18, 0.55); backdrop-filter: blur(8px); padding: 20px 40px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.03); margin-bottom: 30px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 4rem; margin: 0; color: #f4ebd9; }
+        .subtitulo { font-size: 1.1rem; color: #aaaaaa; margin-top: 20px; line-height: 1.6; }
+
+        .contenedor-tiempo-centrado { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 20px 0; }
+        .texto-centrado { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #fff; margin-bottom: 20px; }
+
+        .contador-venn { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .circulo-venn { width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(216, 27, 96, 0.6); display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(18, 18, 18, 0.9); }
+        .numero { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #ffffff; }
+        .etiqueta { font-size: 0.6rem; letter-spacing: 1px; color: #cccccc; }
+
+        .seccion-fotos { width: 100%; padding-top: 20px; padding-bottom: 50px; text-align: center; }
+        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .tarjeta-foto { background: rgba(18, 18, 18, 0.55); padding: 15px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.08); }
+        .tarjeta-foto img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; }
+        .texto-foto { font-family: 'Playfair Display', serif; color: #f4ebd9; font-size: 1.6rem; margin: 15px 0 5px 0; font-weight: 700; }
+
+        /* Estilo para el nuevo texto final */
+        .contenedor-final { width: 100%; max-width: 600px; text-align: center; margin-top: 20px; padding: 20px; background: rgba(18, 18, 18, 0.4); border-radius: 20px; }
+        .texto-final { font-size: 1rem; color: #dddddd; line-height: 1.6; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div id="pantalla-inicio">
+        <button id="boton-iniciar" onclick="iniciarExperiencia()">Love you my princess ❤️</button>
+    </div>
+
+    <div id="transicion-flores"></div>
+    <div id="jardin-interactivo"></div>
+    <div id="corazones-fondo"></div>
+
+    <audio id="musica" loop>
+        <source src="cancion.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="barra-superior">
+        <div class="reproductor-estilo"><p>Love you my princess</p></div>
+    </div>
+
+    <div class="contenido-web">
+        <div class="seccion-principal">
+            <div class="bloque-titulo">
+                <h1>Feliz<br>Ocho Meses</h1>
+                <p class="subtitulo">
+                    Feliz octavo mes mi amor, hoy quiero decirte que eres lo mejor que me ha pasado en esta vida y sé que si hubiera otra vida te buscaría hasta encontrarte, todo este tiempo ha sido muy especial para mí, cada recuerdo contigo tiene algo bonito algo que me hace sonreír sin darme cuenta y me llena el corazón de felicidad. Hoy cumplimos 8 meses que desde que empezó cambió mi vida por completo, me doy cuenta que quiero seguir viviendo mil locuras a tu lado créeme que tenerte en mi vida es una de las mejores cosas que me pasó y cada cosa que haces por mí la aprecio con el corazón, gracias por demostrarme lo que realmente significa ser un buen novio, por cambiar para no perderme y por hacer que a tu lado viva muchas experiencias nuevas y especiales. Gracias por estar siempre para mí por cuidarme y apoyarme por siempre hacerme sentir importante a tu manera genuina. Todo lo que haces por mí lo valoro muchísimo, gracias por cambiar mi vida y hacerla más bonita, gracias por tu cariño, tu apoyo y tu paciencia. Gracias por llegar a mi vida. Te amo te quiero y te adoro infinitamente amor de mi vida 👫❤️
+                </p>
+            </div>
+
+            <div class="contenedor-tiempo-centrado">
+                <p class="texto-centrado">Mira cuanto tiempo estamos amor mio</p>
+                <div class="contador-venn">
+                    <div class="circulo-venn"><span class="numero" id="dias">0</span><span class="etiqueta">DÍAS</span></div>
+                    <div class="circulo-venn"><span class="numero" id="horas">0</span><span class="etiqueta">HORAS</span></div>
+                    <div class="circulo-venn"><span class="numero" id="minutos">0</span><span class="etiqueta">MINS</span></div>
+                    <div class="circulo-venn"><span class="numero" id="segundos">0</span><span class="etiqueta">SEGS</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="seccion-fotos">
+            <div class="galeria-grid">
+                <div class="tarjeta-foto"><img src="foto1.jpg" alt="1"><p class="texto-foto">JUNTOS</p></div>
+                <div class="tarjeta-foto"><img src="foto2.jpg" alt="2"><p class="texto-foto">POR</p></div>
+                <div class="tarjeta-foto"><img src="foto3.jpg" alt="3"><p class="texto-foto">SIEMPRE</p></div>
+            </div>
+        </div>
+
+        <div class="contenedor-final">
+            <p class="texto-final">Amor mio espero esto sea de tu agrado y podamos seguir juntos, realmente espero y quiero es vivir toda mi vida a tu lado, quiero vivir las experiencias que nos brinda la vida a tu lado mi niña, te amo y adoro como no te imaginas, estoy orgulloso de ti demasiado por la mujer que eres, luchas, caes, pero siempre te levantas y eso admiro mucho de ti, yo sere tu pilar para sostenerte y apoyarte en tus momentos dificiles. Por ultimo amor quiero agradecer a la vida por mandarme a ti, mi compañera de mis dias. Gracias mujer por todo y te amo mucho tanto</p>
+        </div>
+    </div>
+
+    <script>
+        function iniciarExperiencia() {
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            document.getElementById('musica').play();
+            ejecutarTransicion();
+            setInterval(crearElementoFlotante, 350);
+        }
+
+        function ejecutarTransicion() {
+            const contenedor = document.getElementById('transicion-flores');
+            contenedor.style.display = 'block';
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    const flor = document.createElement('img');
+                    flor.src = `flor${(i % 3) + 1}.png`; 
+                    flor.className = 'flor-transicion';
+                    flor.style.left = Math.random() * 80 + 'vw';
+                    flor.style.top = Math.random() * 80 + 'vh';
+                    flor.style.width = (Math.random() * 250 + 150) + 'px';
+                    contenedor.appendChild(flor);
+                }, i * 80); 
+            }
+            setTimeout(() => { contenedor.style.display = 'none'; }, 4500);
+        }
+
+        const fechaInicio = new Date(2025, 10, 28, 0, 0, 0).getTime();
+        function actualizarContador() {
+            const ahora = new Date().getTime();
+            const diferencia = ahora - fechaInicio;
+            document.getElementById("dias").innerText = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+            document.getElementById("horas").innerText = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById("minutos").innerText = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            document.getElementById("segundos").innerText = Math.floor((diferencia % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        }
+        setInterval(actualizarContador, 1000);
+        actualizarContador();
+
+        function crearElementoFlotante() {
+            const contenedor = document.getElementById("corazones-fondo");
+            const probabilidad = Math.random();
+            if (probabilidad < 0.20) {
+                const img = document.createElement("img");
+                img.src = "kitty.png"; img.classList.add("imagen-flotante");
+                img.style.left = Math.random() * 100 + "vw"; img.style.animationDuration = Math.random() * 3 + 5 + "s";
+                img.style.width = Math.random() * 20 + 55 + "px"; contenedor.appendChild(img);
+                setTimeout(() => { img.remove(); }, 8000);
+            } else if (probabilidad < 0.40) {
+                const img = document.createElement("img");
+                img.src = "spidey.png"; img.classList.add("imagen-flotante");
+                img.style.left = Math.random() * 100 + "vw"; img.style.animationDuration = Math.random() * 3 + 5 + "s";
+                img.style.width = Math.random() * 20 + 55 + "px"; contenedor.appendChild(img);
+                setTimeout(() => { img.remove(); }, 8000);
+            } else {
+                const corazon = document.createElement("div");
+                corazon.classList.add("corazon"); corazon.innerText = "❤";
+                corazon.style.left = Math.random() * 100 + "vw"; corazon.style.animationDuration = Math.random() * 3 + 4 + "s";
+                corazon.style.fontSize = Math.random() * 15 + 22 + "px"; contenedor.appendChild(corazon);
+                setTimeout(() => { corazon.remove(); }, 7000);
+            }
+        }
+
+        let ultimoTiempoFlor = 0;
+        function dibujarFlor(x, y) {
+            const ahora = Date.now();
+            if (ahora - ultimoTiempoFlor > 40) {
+                const flor = document.createElement("img");
+                const numFlor = Math.floor(Math.random() * 3) + 1;
+                flor.src = `flor${numFlor}.png`;
+                flor.classList.add("flor-dibujada");
+                flor.style.left = x + "px"; flor.style.top = y + "px";
+                const rotacion = Math.random() * 360; const tamaño = Math.random() * 50 + 50;
+                flor.style.width = tamaño + "px"; flor.style.height = tamaño + "px";
+                flor.style.opacity = "1";
+                flor.style.transform = `translate(-50%, -50%) rotate(${rotacion}deg) scale(0)`;
+                document.getElementById("jardin-interactivo").appendChild(flor);
+                setTimeout(() => {
+                    flor.style.transition = "transform 0.3s ease-out, opacity 1.5s ease-out";
+                    flor.style.transform = `translate(-50%, -50%) rotate(${rotacion}deg) scale(1)`;
+                }, 10);
+                setTimeout(() => { flor.style.opacity = "0"; }, 1500);
+                setTimeout(() => { flor.remove(); }, 3500);
+                ultimoTiempoFlor = ahora;
+            }
+        }
+        document.addEventListener("mousemove", (e) => { dibujarFlor(e.pageX, e.pageY); });
+        document.addEventListener("touchmove", (e) => { dibujarFlor(e.touches[0].pageX, e.touches[0].pageY); });
+    </script>
+</body>
+</html>
